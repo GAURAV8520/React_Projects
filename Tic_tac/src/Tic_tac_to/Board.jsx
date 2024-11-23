@@ -7,14 +7,9 @@ function Board() {
 
     const checkWinner = () => {
         const winnerLogic = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
         ];
         for (let logic of winnerLogic) {
             const [a, b, c] = logic;
@@ -25,7 +20,6 @@ function Board() {
         return false;
     };
 
-    // New function to check for tie
     const checkTie = () => {
         return state.every(square => square !== null);
     };
@@ -34,9 +28,7 @@ function Board() {
     const isTie = !isWinner && checkTie();
 
     const handleClick = (index) => {
-        if (state[index] !== null || isWinner || isTie) {
-            return;
-        }
+        if (state[index] !== null || isWinner || isTie) return;
         const copyState = [...state];
         copyState[index] = isXturn ? "X" : "O";
         setState(copyState);
@@ -48,63 +40,53 @@ function Board() {
         setIsXturn(true);
     };
 
-    const renderGameStatus = () => {
-        if (isWinner) {
-            return (
-                <>
-                    {isWinner} won the game!
-                    <div>
-                        <button 
-                            onClick={clearGame} 
-                            className="mt-3 p-2 border-solid border-4 border-clan-200 hover:bg-gray-100"
-                        >
-                            Play again
-                        </button>
-                    </div>
-                </>
-            );
-        } else if (isTie) {
-            return (
-                <>
-                    Game ended in a tie!
-                    <div>
-                        <button 
-                            onClick={clearGame} 
-                            className="mt-3 p-2 border-solid border-4 border-clan-200 hover:bg-gray-100"
-                        >
-                            Play again
-                        </button>
-                    </div>
-                </>
-            );
-        } else {
-            return <h1 className="mb-5">Player {isXturn ? "X" : "O"} please move</h1>;
-        }
-    };
-
     return (
-        <div className="board-container m-32">
-            {renderGameStatus()}
-            
-            {!isWinner && !isTie && (
-                <>
-                    <div className="flex justify-evenly items-center">
-                        <Square onClick={() => handleClick(0)} value={state[0]} />
-                        <Square onClick={() => handleClick(1)} value={state[1]} />
-                        <Square onClick={() => handleClick(2)} value={state[2]} />
+        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+            <div className="mb-8 text-center">
+                {isWinner ? (
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-light">
+                            Player <span className={isWinner === 'X' ? 'text-blue-400' : 'text-pink-400'}>
+                                {isWinner}
+                            </span> wins!
+                        </h2>
+                        <button 
+                            onClick={clearGame}
+                            className="px-6 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 
+                                     transition-colors duration-300 text-sm font-medium"
+                        >
+                            New Game
+                        </button>
                     </div>
-                    <div className="flex justify-evenly items-center">
-                        <Square onClick={() => handleClick(3)} value={state[3]} />
-                        <Square onClick={() => handleClick(4)} value={state[4]} />
-                        <Square onClick={() => handleClick(5)} value={state[5]} />
+                ) : isTie ? (
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-light">It's a tie!</h2>
+                        <button 
+                            onClick={clearGame}
+                            className="px-6 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 
+                                     transition-colors duration-300 text-sm font-medium"
+                        >
+                            New Game
+                        </button>
                     </div>
-                    <div className="flex justify-evenly items-center">
-                        <Square onClick={() => handleClick(6)} value={state[6]} />
-                        <Square onClick={() => handleClick(7)} value={state[7]} />
-                        <Square onClick={() => handleClick(8)} value={state[8]} />
-                    </div>
-                </>
-            )}
+                ) : (
+                    <h2 className="text-xl font-light mb-8">
+                        Player <span className={isXturn ? 'text-blue-400' : 'text-pink-400'}>
+                            {isXturn ? 'X' : 'O'}
+                        </span>'s turn
+                    </h2>
+                )}
+            </div>
+
+            <div className="grid grid-cols-3 gap-1 bg-gray-900 p-2 rounded-xl shadow-2xl">
+                {Array(9).fill(null).map((_, index) => (
+                    <Square 
+                        key={index}
+                        onClick={() => handleClick(index)}
+                        value={state[index]}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
